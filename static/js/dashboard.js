@@ -39,7 +39,7 @@ function fillLegit() {
 function fillSuspicious() {
   document.getElementById('txAmt').value       = '9999.99';
   document.getElementById('productCD').value   = 'C';
-  document.getElementById('card1').value       = '1111';      // ← change this
+  document.getElementById('card1').value       = '4774';      // ← change this
   document.getElementById('card4').value       = 'american express';
   document.getElementById('card6').value       = 'credit';
   document.getElementById('emailDomain').value = 'protonmail.com';
