@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FraudShield — Real-Time Detection Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/dashboard.css"/>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    <span class="logo-text">Fraud<span>Shield</span></span>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div> Live</div>
+    <span class="header-time" id="clock">--:--:--</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- API STATUS BAR -->
+  <div class="api-bar">
+    <span class="api-bar-label">API</span>
+    <span class="api-url" id="apiUrl">/predict</span>
+    <div class="api-status">
+      <div class="api-status-dot"></div>
+      <span style="color: var(--accent3)">Connected</span>
+    </div>
+    <button class="btn-copy" onclick="copyApiUrl()">Copy</button>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-card blue">
+    <div class="stat-label">Total Predictions</div>
+    <div class="stat-value blue" id="totalPred">0</div>
+    <div class="stat-sub">session</div>
+  </div>
+
+  <div class="stat-card red">
+    <div class="stat-label">Fraud Detected</div>
+    <div class="stat-value red" id="fraudCount">0</div>
+    <div class="stat-sub" id="fraudRate">0.0% rate</div>
+  </div>
+
+  <div class="stat-card green">
+    <div class="stat-label">Model PR-AUC</div>
+    <div class="stat-value green">{{ "%.3f"|format(model_info.pr_auc) }}</div>
+    <div class="stat-sub">{{ model_info.model }}</div>
+  </div>
+
+  <div class="stat-card warn">
+    <div class="stat-label">Threshold</div>
+    <div class="stat-value warn" id="thresholdVal">{{ "%.2f"|format(model_info.threshold) }}</div>
+    <div class="stat-sub">70% recall target</div>
+  </div>
+
+  <!-- PREDICT FORM -->
+  <div class="panel predict-panel">
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+    <div class="panel-title">Run Prediction</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Transaction Amount ($)</label>
+        <input type="number" id="txAmt" value="150.00" step="0.01" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Product Code</label>
+        <select id="productCD">
+          <option value="W">W — Web</option>
+          <option value="H">H — Home</option>
+          <option value="C">C — Card</option>
+          <option value="S">S — Service</option>
+          <option value="R">R — Recurring</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Card ID</label>
+        <input type="number" id="card1" value="9500"/>
+      </div>
+      <div class="form-group">
+        <label>Card Type</label>
+        <select id="card4">
+          <option value="visa">Visa</option>
+          <option value="mastercard">Mastercard</option>
+          <option value="american express">Amex</option>
+          <option value="discover">Discover</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Card Category</label>
+        <select id="card6">
+          <option value="debit">Debit</option>
+          <option value="credit">Credit</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Email Domain</label>
+        <input type="text" id="emailDomain" value="gmail.com"/>
+      </div>
+      <div class="form-group">
+        <label>C1 (count feature)</label>
+        <input type="number" id="c1" value="1" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>C13 (count feature)</label>
+        <input type="number" id="c13" value="1" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>C14 (count feature)</label>
+        <input type="number" id="c14" value="1" min="0"/>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="fillLegit()">Load Legit Example</button>
+      <button class="btn-secondary danger" onclick="fillSuspicious()">Load Suspicious</button>
+    </div>
+    <button class="btn-predict" onclick="runPrediction()">⚡ Analyze Transaction</button>
+  </div>
+
+  <!-- RESULT PANEL -->
+  <div class="panel result-panel">
+    <div class="panel-title">Detection Result</div>
+    <div class="result-empty" id="resultEmpty">
+      <div class="result-empty-icon">🔍</div>
+      <div class="result-empty-text">Awaiting transaction...</div>
+    </div>
+    <div class="result-content" id="resultContent">
+      <div id="riskBadge" class="risk-badge risk-low">🟢 LOW RISK</div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-label">
+          <span>Fraud Probability</span>
+          <span id="probPct">0%</span>
+        </div>
+        <div class="prob-bar-track">
+          <div class="prob-bar-fill low" id="probBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="result-meta">
+        <div class="meta-item">
+          <div class="meta-item-label">Transaction ID</div>
+          <div class="meta-item-value" id="txId">—</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-item-label">Confidence</div>
+          <div class="meta-item-value" id="confidence">—</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-item-label">Model</div>
+          <div class="meta-item-value" id="modelName">—</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-item-label">Timestamp</div>
+          <div class="meta-item-value" id="resultTime">—</div>
+        </div>
+      </div>
+      <div class="recommendation" id="recommendation">—</div>
+    </div>
+  </div>
+
+  <!-- SHAP FACTORS -->
+  <div class="panel shap-panel">
+    <div class="panel-title">Top Risk Factors (SHAP)</div>
+    <div class="shap-list" id="shapList">
+      <div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">
+        Run a prediction to see feature importance
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY TABLE -->
+  <div class="panel history-panel">
+    <div class="panel-title">Prediction History</div>
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Time</th><th>Amount</th><th>Prob</th><th>Risk</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr>
+          <td colspan="5" style="color:var(--muted);text-align:center;padding:20px">
+            No predictions yet
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODEL METRICS BAR -->
+  <div class="panel metrics-panel">
+    <div class="metric-item">
+      <div class="metric-label">PR-AUC</div>
+      <div class="metric-value" style="color:var(--accent)">{{ "%.3f"|format(model_info.pr_auc) }}</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:{{ (model_info.pr_auc * 100)|int }}%;background:var(--accent)"></div></div>
+      <div class="metric-sub">Primary metric</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-label">ROC-AUC</div>
+      <div class="metric-value" style="color:var(--accent3)">{{ "%.3f"|format(model_info.roc_auc) }}</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:{{ (model_info.roc_auc * 100)|int }}%;background:var(--accent3)"></div></div>
+      <div class="metric-sub">Class separation</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-label">F1 Score</div>
+      <div class="metric-value" style="color:var(--warn)">{{ "%.3f"|format(model_info.f1) }}</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:{{ (model_info.f1 * 100)|int }}%;background:var(--warn)"></div></div>
+      <div class="metric-sub">Harmonic mean</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-label">Threshold</div>
+      <div class="metric-value" style="color:var(--accent2)">{{ "%.2f"|format(model_info.threshold) }}</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:{{ (model_info.threshold * 100)|int }}%;background:var(--accent2)"></div></div>
+      <div class="metric-sub">After tuning</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-label">Features</div>
+      <div class="metric-value">{{ model_info.n_features }}</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:50%;background:var(--muted)"></div></div>
+      <div class="metric-sub">Engineered</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-label">Dataset</div>
+      <div class="metric-value">475K</div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:80%;background:var(--muted)"></div></div>
+      <div class="metric-sub">IEEE-CIS rows</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

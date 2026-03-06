@@ -29,3 +29,6 @@ python-dotenv
 joblib
 
 ipykernel
+
+jinja2 
+python-multipart
