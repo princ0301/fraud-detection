@@ -58,8 +58,9 @@ app.add_middleware(
     allow_headers  = ["*"],
 )
  
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-templates = Jinja2Templates(directory=str(TMPL_DIR))
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+templates = Jinja2Templates(directory=str(TMPL_DIR)) if TMPL_DIR.exists() else None
  
 class TransactionRequest(BaseModel):
     TransactionAmt : float           = Field(...,  example=150.00)
