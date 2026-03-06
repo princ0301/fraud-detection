@@ -3,6 +3,9 @@
   "pr_auc": 0.6404,
   "roc_auc": 0.9402,
   "f1": 0.6077,
-  "threshold": 0.5,
-  "mlflow_run_id": "eb511a837d764d9683f4f447a0b5205a"
+  "threshold": 0.0915,
+  "mlflow_run_id": "eb511a837d764d9683f4f447a0b5205a",
+  "threshold_recall": 0.7002,
+  "threshold_precision": 0.4064,
+  "threshold_f1": 0.5143
 }
