@@ -12,11 +12,11 @@
 
 **Production-grade ML system that detects fraudulent transactions in real-time using XGBoost, SHAP explainability, and a live monitoring dashboard — deployed on Render with full CI/CD.**
 
-[🚀 Live Demo](#) • [📖 API Docs](#) • [📊 Dashboard](#)
+[🚀 Live Demo](https://fraud-detection-bg2l.onrender.com/dashboard) • [📖 API Docs](#) • [📊 Dashboard](#)
 
 ---
 
-![Dashboard Preview](docs/dashboard_preview.png)
+<!-- ![Dashboard Preview](docs/dashboard_preview.png) -->
 
 </div>
 
@@ -50,7 +50,7 @@ FraudShield is an **end-to-end machine learning system** built on the [IEEE-CIS 
 - Models degrade over time as fraud patterns evolve
 
 ### The Solution
-A real-time API that scores every transaction in **< 100ms**, explains *why* it flagged a transaction using SHAP values, and monitors for data drift automatically.
+A real-time API that scores every transaction, explains *why* it flagged a transaction using SHAP values, and monitors for data drift automatically.
 
 ---
 
@@ -264,7 +264,7 @@ fraud-detection/
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/yourusername/fraud-detection.git
+git clone https://github.com/princ0301/fraud-detection.git
 cd fraud-detection
 ```
 
@@ -476,15 +476,6 @@ Push to any branch
 | **DevOps** | Docker, CI/CD, cloud deployment |
 | **Testing** | 25 automated tests, pytest |
 
-### Business Impact
-
-> If deployed on a platform processing **1M transactions/day** at 3.5% fraud rate:
-> - **35,000 fraud attempts/day**
-> - Model catches **24,500** (70% recall)
-> - At average fraud value of $200 → **$4.9M saved daily**
-
----
-
 ## 🙏 Acknowledgements
 
 - [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection) — Vesta Corporation
@@ -494,19 +485,6 @@ Push to any branch
 
 ---
 
-## 📬 Contact
-
-**Prince** — ML Engineer
-
-[![GitHub](https://img.shields.io/badge/GitHub-princ0301-181717?style=flat&logo=github)](https://github.com/princ0301)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=flat&logo=linkedin)](https://linkedin.com)
-
----
-
 <div align="center">
-
-⭐ **Star this repo if you found it helpful!** ⭐
-
-Made with 🔥 by Prince
 
 </div>
