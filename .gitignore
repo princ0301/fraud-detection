@@ -4,3 +4,7 @@ __pycache__/
 data/raw/
 .env
 mlflow_runs/
+data/processed/X_train.csv
+data/processed/X_val.csv
+data/processed/y_train.csv
+data/processed/y_val.csv
