@@ -12,7 +12,7 @@
 
 **Production-grade ML system that detects fraudulent transactions in real-time using XGBoost, SHAP explainability, and a live monitoring dashboard — deployed on Render with full CI/CD.**
 
-[🚀 Live Demo](https://fraud-detection-bg2l.onrender.com/dashboard) • [📖 API Docs](#) • [📊 Dashboard](#)
+[🚀 Live Demo](https://fraud-detection-bg2l.onrender.com/dashboard)
 
 ---
 
