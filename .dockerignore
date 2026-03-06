@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+notebooks/
+data/raw/
+*.csv
+tests/
+README.md
+*.png
+mlflow_runs/
+.env

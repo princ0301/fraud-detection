@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fraud-detection-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
