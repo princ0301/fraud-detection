@@ -27,3 +27,5 @@ streamlit
 
 python-dotenv
 joblib
+
+ipykernel

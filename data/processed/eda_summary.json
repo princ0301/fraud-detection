@@ -1,0 +1,8 @@
+{
+  "total_rows": 590540,
+  "fraud_count": 20663,
+  "fraud_rate_pct": 3.5,
+  "total_features": 437,
+  "missing_cols": 414,
+  "train_val_split_day": 141.1
+}
