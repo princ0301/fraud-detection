@@ -225,10 +225,10 @@ def dashboard(request: Request):
         "n_features" : len(feature_cols),
     }
     return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request, "model_info": info}
+        request=request,
+        name="dashboard.html",
+        context={"model_info": info}
     )
-
 
 @app.get("/health", response_model=HealthResponse, tags=["Health"])
 def health():
